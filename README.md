@@ -19,7 +19,7 @@ make
 Afterwards, you can execute:
 
 ```
-dipdiff.py
+./dipdiff.py
 ```
 
 Output files
