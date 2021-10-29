@@ -1,0 +1,6 @@
+[submodule "submodules/svim-asm"]
+	path = submodules/svim-asm
+	url = https://github.com/fenderglass/svim-asm
+[submodule "submodules/minimap2"]
+	path = submodules/minimap2
+	url = https://github.com/lh3/minimap2
