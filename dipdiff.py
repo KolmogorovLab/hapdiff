@@ -16,6 +16,11 @@ sys.path.insert(0, os.path.join(pipeline_dir, "submodules", "svim-asm", "src"))
 import svim_asm.main as svim
 
 
+def file_check(filename):
+    if not os.path.isfile(filename) or os.path.getsize(filename) == 0:
+        raise Exception("File not found, or has zero length:", filename)
+
+
 def generate_alignment(ref_path, asm_path, num_threads, out_bam):
     cmd = "minimap2 -ax asm20 -B 2 -E 3,1 -O 6,100 --cs -t {0} {1} {2} -K 5G | samtools sort -m 4G -@ 8 >{3}" \
                             .format(num_threads, ref_path, asm_path, out_bam)
@@ -55,6 +60,10 @@ def main():
     if not os.path.isdir(args.out_dir):
         os.mkdir(args.out_dir)
 
+    file_check(args.reference)
+    file_check(args.hap_pat)
+    file_check(args.hap_mat)
+
     prefix = "dipdiff"
     aln_1 = os.path.join(args.out_dir, prefix + "_pat" + ".bam")
     aln_2 = os.path.join(args.out_dir, prefix + "_mat" + ".bam")
@@ -65,6 +74,9 @@ def main():
     thread_2.start()
     thread_1.join()
     thread_2.join()
+
+    file_check(aln_1)
+    file_check(aln_2)
 
     svim_cmd = ["diploid", args.out_dir, aln_1, aln_2, args.reference, "--min_sv_size", str(args.sv_size),
                 "--partition_max_distance", "5000", "--max_edit_distance", "0.3", "--filter_contained"]
