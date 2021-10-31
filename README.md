@@ -6,20 +6,24 @@ as the result might be dependent on the aligner version and parameters.
 
 ## Version 0.1
 
-Installation & running
-----------------------
+Quick start
+-----------
+
+
+Dipdiff takes as input reference genome and a pair of haplotypes, and outputs
+structural vaiant callse in VCF format. A recommended way to run is the Docker distribution.
+
+Next steps assume that your `ref.fasta`, `hap_1.fasta` and `hap_2.fasta` are in the same directory,
+which will also be used for dipdiff output. If it is not the case, you might need to bind additional 
+directories using the Docker's `-v / --volume` argument. The number of threads (`-t` argument)
+should be adjusted according to the available resources.
+
 
 ```
-git clone https://github.com/fenderglass/dipdiff
-cd dipdiff
-git submodule update --init --recursive
-make
-```
-
-Afterwards, you can execute:
-
-```
-./dipdiff.py
+cd directory_with_input
+DD_DIR=`pwd`
+./dipdiff.py --reference ref.fasta --pat hap_1.fasta --mat hap_2.fasta --out-dir out_path -t 20
+docker run -v $DD_DIR:$DD_DIR --ipc=host -u `id -u`:`id -g` mkolmogo/dipdiff:0.1 dipdiff.py --reference $DD_DIR/ref.fasta --pat $DD_DIR/hap_1.fasta --mat $DD_DIR/hap_2.fasta --out-dir $DD_DIR/dipdiff -t 20
 ```
 
 Output files
@@ -27,6 +31,27 @@ Output files
 
 The output directory will contain `variants.vcf` file with structural variants.
 
+
+Source Installation
+-------------------
+
+Alernatively, you can run dipdiff locally as follows.
+
+```
+git clone https://github.com/fenderglass/dipdiff
+cd dipdiff
+git submodule update --init
+make
+pip install -r requirements.txt
+```
+
+In addition, dipdiff requires [samtools](https://github.com/samtools) to be installed in your system.
+
+Afterwards, you can execute:
+
+```
+./dipdiff.py --reference ref.fasta --pat hap_1.fasta --mat hap_2.fasta --out-dir out_path -t 20
+```
 
 Acknowledgements
 ----------------
