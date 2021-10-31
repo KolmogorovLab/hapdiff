@@ -22,7 +22,7 @@ def file_check(filename):
 
 
 def generate_alignment(ref_path, asm_path, num_threads, out_bam):
-    cmd = "minimap2 -ax asm20 -B 2 -E 3,1 -O 6,100 --cs -t {0} {1} {2} -K 5G | samtools sort -m 4G -@ 8 >{3}" \
+    cmd = MINIMAP2 + " -ax asm20 -B 2 -E 3,1 -O 6,100 --cs -t {0} {1} {2} -K 5G | samtools sort -m 4G -@ 8 >{3}" \
                             .format(num_threads, ref_path, asm_path, out_bam)
     print("Running: " + cmd)
     subprocess.check_call(cmd, shell=True, stderr=open(os.devnull, "w"))
