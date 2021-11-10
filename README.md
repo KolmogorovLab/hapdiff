@@ -22,7 +22,8 @@ should be adjusted according to the available resources.
 ```
 cd directory_with_input
 DD_DIR=`pwd`
-docker run -v $DD_DIR:$DD_DIR -u `id -u`:`id -g` mkolmogo/dipdiff:0.1 dipdiff.py --reference $DD_DIR/ref.fasta --pat $DD_DIR/hap_1.fasta --mat $DD_DIR/hap_2.fasta --out-dir $DD_DIR/dipdiff -t 20
+docker run -v $DD_DIR:$DD_DIR -u `id -u`:`id -g` mkolmogo/dipdiff:0.1 \
+  dipdiff.py --reference $DD_DIR/ref.fasta --pat $DD_DIR/hap_1.fasta --mat $DD_DIR/hap_2.fasta --out-dir $DD_DIR/dipdiff -t 20
 ```
 
 Output files
