@@ -25,7 +25,7 @@ def generate_alignment(ref_path, asm_path, num_threads, out_bam):
     cmd = MINIMAP2 + " -ax asm20 -B 2 -E 3,1 -O 6,100 --cs -t {0} {1} {2} -K 5G | samtools sort -m 4G -@ 8 >{3}" \
                             .format(num_threads, ref_path, asm_path, out_bam)
     print("Running: " + cmd)
-    subprocess.check_call(cmd, shell=True, stderr=open(os.devnull, "w"))
+    subprocess.check_call(cmd, shell=True)
     subprocess.check_call("samtools index -@ 4 {0}".format(out_bam), shell=True)
 
 
@@ -68,14 +68,16 @@ def main():
     aln_1 = os.path.join(args.out_dir, prefix + "_pat" + ".bam")
     aln_2 = os.path.join(args.out_dir, prefix + "_mat" + ".bam")
 
-    thread_1 = Thread(target=generate_alignment, args=(args.reference, args.hap_pat, args.threads // 2, aln_1))
-    thread_2 = Thread(target=generate_alignment, args=(args.reference, args.hap_mat, args.threads // 2, aln_2))
-    thread_1.start()
-    thread_2.start()
-    thread_1.join()
-    thread_2.join()
+    #thread_1 = Thread(target=generate_alignment, args=(args.reference, args.hap_pat, args.threads // 2, aln_1))
+    #thread_2 = Thread(target=generate_alignment, args=(args.reference, args.hap_mat, args.threads // 2, aln_2))
+    #thread_1.start()
+    #thread_2.start()
+    #thread_1.join()
+    #thread_2.join()
 
+    generate_alignment(args.reference, args.hap_pat, args.threads, aln_1)
     file_check(aln_1)
+    generate_alignment(args.reference, args.hap_mat, args.threads, aln_2)
     file_check(aln_2)
 
     svim_cmd = ["diploid", args.out_dir, aln_1, aln_2, args.reference, "--min_sv_size", str(args.sv_size),

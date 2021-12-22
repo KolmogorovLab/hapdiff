@@ -4,7 +4,7 @@ This is a simple SV calling package for diploid assemblies. It uses a modified v
 The package includes its own version [minimap2](https://github.com/lh3/minimap2) to ensure reproducibility between runs, 
 as the result might be dependent on the aligner version and parameters.
 
-## Version 0.1
+## Version 0.2
 
 Quick start
 -----------
@@ -22,7 +22,7 @@ should be adjusted according to the available resources.
 ```
 cd directory_with_input
 DD_DIR=`pwd`
-docker run -v $DD_DIR:$DD_DIR -u `id -u`:`id -g` mkolmogo/dipdiff:0.1 \
+docker run -v $DD_DIR:$DD_DIR -u `id -u`:`id -g` mkolmogo/dipdiff:0.2 \
   dipdiff.py --reference $DD_DIR/ref.fasta --pat $DD_DIR/hap_1.fasta --mat $DD_DIR/hap_2.fasta --out-dir $DD_DIR/dipdiff -t 20
 ```
 
