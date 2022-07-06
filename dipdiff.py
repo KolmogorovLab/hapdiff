@@ -47,7 +47,7 @@ def main():
                         default=None, required=True,
                         metavar="path", help="Output directory")
     parser.add_argument("--sv-size", dest="sv_size", type=int,
-                        default=50, metavar="int", help="minimum SV size [50]")
+                        default=30, metavar="int", help="minimum SV size [30]")
     parser.add_argument("-t", "--threads", dest="threads", type=int,
                         default=10, metavar="int", help="number of parallel threads [10]")
     args = parser.parse_args()
