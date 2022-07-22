@@ -4,7 +4,7 @@ This is a simple SV calling package for diploid assemblies. It uses a modified v
 The package includes its own version [minimap2](https://github.com/lh3/minimap2) to ensure reproducibility between runs, 
 as the result might be dependent on the aligner version and parameters.
 
-## Version 0.3
+## Version 0.4
 
 Quick start
 -----------
