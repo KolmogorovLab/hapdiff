@@ -80,9 +80,12 @@ def main():
     generate_alignment(args.reference, args.hap_mat, args.threads, aln_2)
     file_check(aln_2)
 
+    SVIM_OUTPUT = os.path.join(args.out_dir, "variants.vcf")
     svim_cmd = ["diploid", args.out_dir, aln_1, aln_2, args.reference, "--min_sv_size", str(args.sv_size),
                 "--partition_max_distance", "5000", "--max_edit_distance", "0.3", "--filter_contained"]
     svim.main(svim_cmd)
+    subprocess.check_call(["bgzip", SVIM_OUTPUT])
+    subprocess.check_call(["tabix", SVIM_OUTPUT + ".gz"])
     #os.remove(os.path.join(out_dir, "sv-lengths.png"))
 
     return 0
