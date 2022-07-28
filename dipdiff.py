@@ -48,6 +48,8 @@ def main():
                         metavar="path", help="Output directory")
     parser.add_argument("--sv-size", dest="sv_size", type=int,
                         default=30, metavar="int", help="minimum SV size [30]")
+    #parser.add_argument("--phased", dest="phased", action="store_true",
+    #                    default=False, help="produce phased vcf")
     parser.add_argument("-t", "--threads", dest="threads", type=int,
                         default=10, metavar="int", help="number of parallel threads [10]")
     args = parser.parse_args()
@@ -75,18 +77,30 @@ def main():
     #thread_1.join()
     #thread_2.join()
 
-    generate_alignment(args.reference, args.hap_pat, args.threads, aln_1)
+    #generate_alignment(args.reference, args.hap_pat, args.threads, aln_1)
     file_check(aln_1)
-    generate_alignment(args.reference, args.hap_mat, args.threads, aln_2)
+    #generate_alignment(args.reference, args.hap_mat, args.threads, aln_2)
     file_check(aln_2)
 
-    SVIM_OUTPUT = os.path.join(args.out_dir, "variants.vcf")
-    svim_cmd = ["diploid", args.out_dir, aln_1, aln_2, args.reference, "--min_sv_size", str(args.sv_size),
-                "--partition_max_distance", "5000", "--max_edit_distance", "0.3", "--filter_contained"]
-    svim.main(svim_cmd)
-    subprocess.check_call(["bgzip", SVIM_OUTPUT])
-    subprocess.check_call(["tabix", SVIM_OUTPUT + ".gz"])
-    #os.remove(os.path.join(out_dir, "sv-lengths.png"))
+    def run_svim(out_file, phased):
+        svim_cmd = ["diploid", args.out_dir, aln_1, aln_2, args.reference, "--min_sv_size", str(args.sv_size),
+                    "--partition_max_distance", "5000", "--max_edit_distance", "0.3", "--filter_contained"]
+        if phased:
+            svim_cmd.append("--phased_gt")
+        svim.main(svim_cmd)
+
+        SVIM_OUTPUT = os.path.join(args.out_dir, "variants.vcf")
+        SV_LENGTHS = os.path.join(args.out_dir, "sv-lengths.png")
+        out_with_prefix = os.path.join(args.out_dir, out_file)
+        os.rename(SVIM_OUTPUT, out_with_prefix)
+
+        subprocess.check_call(["bgzip", out_with_prefix])
+        subprocess.check_call(["tabix", out_with_prefix + ".gz"])
+        if os.path.isfile(SV_LENGTHS):
+            os.remove(SV_LENGTHS)
+
+    run_svim("dipdiff_unphased.vcf", False)
+    run_svim("dipdiff_phased.vcf", True)
 
     return 0
 
