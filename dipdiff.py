@@ -77,9 +77,9 @@ def main():
     #thread_1.join()
     #thread_2.join()
 
-    #generate_alignment(args.reference, args.hap_pat, args.threads, aln_1)
+    generate_alignment(args.reference, args.hap_pat, args.threads, aln_1)
     file_check(aln_1)
-    #generate_alignment(args.reference, args.hap_mat, args.threads, aln_2)
+    generate_alignment(args.reference, args.hap_mat, args.threads, aln_2)
     file_check(aln_2)
 
     def run_svim(out_file, phased):
