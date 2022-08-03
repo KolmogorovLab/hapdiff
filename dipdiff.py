@@ -46,6 +46,9 @@ def main():
     parser.add_argument("--out-dir", dest="out_dir",
                         default=None, required=True,
                         metavar="path", help="Output directory")
+    parser.add_argument("--tandem-repeats", dest="tandem_repeats",
+                        default=None, required=False,
+                        metavar="path", help="Tandem repeat annotation in bed format")
     parser.add_argument("--sv-size", dest="sv_size", type=int,
                         default=30, metavar="int", help="minimum SV size [30]")
     #parser.add_argument("--phased", dest="phased", action="store_true",
@@ -84,9 +87,11 @@ def main():
 
     def run_svim(out_file, phased):
         svim_cmd = ["diploid", args.out_dir, aln_1, aln_2, args.reference, "--min_sv_size", str(args.sv_size),
-                    "--partition_max_distance", "5000", "--max_edit_distance", "0.3", "--filter_contained"]
+                    "--partition_max_distance", "5000", "--max_edit_distance", "0.3", "--filter_contained", "--query_names"]
         if phased:
             svim_cmd.append("--phased_gt")
+        if args.tandem_repeats:
+            svim_cmd.extend(["--tandem", args.tandem_repeats])
         svim.main(svim_cmd)
 
         SVIM_OUTPUT = os.path.join(args.out_dir, "variants.vcf")
@@ -94,8 +99,8 @@ def main():
         out_with_prefix = os.path.join(args.out_dir, out_file)
         os.rename(SVIM_OUTPUT, out_with_prefix)
 
-        subprocess.check_call(["bgzip", out_with_prefix])
-        subprocess.check_call(["tabix", out_with_prefix + ".gz"])
+        subprocess.check_call(["bgzip", "-f", out_with_prefix])
+        subprocess.check_call(["tabix", "-f", out_with_prefix + ".gz"])
         if os.path.isfile(SV_LENGTHS):
             os.remove(SV_LENGTHS)
 
