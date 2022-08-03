@@ -12,6 +12,8 @@ pipeline_dir = os.path.dirname(os.path.realpath(__file__))
 MINIMAP2 = os.path.join(pipeline_dir, "submodules", "minimap2", "minimap2")
 SAMTOOLS = "samtools"
 
+VERSION = "0.6"
+
 sys.path.insert(0, os.path.join(pipeline_dir, "submodules", "svim-asm", "src"))
 import svim_asm.main as svim
 
@@ -55,6 +57,7 @@ def main():
     #                    default=False, help="produce phased vcf")
     parser.add_argument("-t", "--threads", dest="threads", type=int,
                         default=10, metavar="int", help="number of parallel threads [10]")
+    parser.add_argument("-v", "--version", action="version", version=VERSION)
     args = parser.parse_args()
 
     for e in [MINIMAP2, SAMTOOLS]:
