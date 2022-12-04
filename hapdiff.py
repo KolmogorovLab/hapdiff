@@ -72,7 +72,7 @@ def main():
     file_check(args.hap_pat)
     file_check(args.hap_mat)
 
-    prefix = "dipdiff"
+    prefix = "hapdiff"
     aln_1 = os.path.join(args.out_dir, prefix + "_pat" + ".bam")
     aln_2 = os.path.join(args.out_dir, prefix + "_mat" + ".bam")
 
@@ -107,8 +107,8 @@ def main():
         if os.path.isfile(SV_LENGTHS):
             os.remove(SV_LENGTHS)
 
-    run_svim("dipdiff_unphased.vcf", False)
-    run_svim("dipdiff_phased.vcf", True)
+    run_svim("hapdiff_unphased.vcf", False)
+    run_svim("hapdiff_phased.vcf", True)
 
     return 0
 

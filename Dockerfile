@@ -26,10 +26,10 @@ RUN wget https://github.com/samtools/samtools/releases/download/1.9/samtools-1.9
 	make && \
 	cp samtools /usr/bin/samtools
 
-COPY . /opt/dipdiff
-WORKDIR /opt/dipdiff
+COPY . /opt/hapdiff
+WORKDIR /opt/hapdiff
 RUN make
 
-ENV PATH "/opt/dipdiff:${PATH}"
+ENV PATH "/opt/hapdiff:${PATH}"
 ENV PYTHONUNBUFFERED "1"
 ENV MPLCONFIGDIR "/tmp"
