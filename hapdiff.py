@@ -12,7 +12,7 @@ pipeline_dir = os.path.dirname(os.path.realpath(__file__))
 MINIMAP2 = os.path.join(pipeline_dir, "submodules", "minimap2", "minimap2")
 SAMTOOLS = "samtools"
 
-VERSION = "0.6"
+VERSION = "0.7"
 
 sys.path.insert(0, os.path.join(pipeline_dir, "submodules", "svim-asm", "src"))
 import svim_asm.main as svim
