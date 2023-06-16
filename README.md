@@ -22,7 +22,7 @@ should be adjusted according to the available resources.
 ```
 cd directory_with_input
 DD_DIR=`pwd`
-docker run -v $DD_DIR:$DD_DIR -u `id -u`:`id -g` mkolmogo/hapdiff:0.7 \
+docker run -v $DD_DIR:$DD_DIR -u `id -u`:`id -g` mkolmogo/hapdiff:0.8 \
   hapdiff.py --reference $DD_DIR/ref.fasta --pat $DD_DIR/hap_1.fasta --mat $DD_DIR/hap_2.fasta --out-dir $DD_DIR/hapdiff -t 20
 ```
 
