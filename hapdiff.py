@@ -12,7 +12,7 @@ pipeline_dir = os.path.dirname(os.path.realpath(__file__))
 MINIMAP2 = os.path.join(pipeline_dir, "submodules", "minimap2", "minimap2")
 SAMTOOLS = "samtools"
 
-VERSION = "0.7"
+VERSION = "0.8"
 
 sys.path.insert(0, os.path.join(pipeline_dir, "submodules", "svim-asm", "src"))
 import svim_asm.main as svim
@@ -51,6 +51,9 @@ def main():
     parser.add_argument("--tandem-repeats", dest="tandem_repeats",
                         default=None, required=False,
                         metavar="path", help="Tandem repeat annotation in bed format")
+    parser.add_argument("--sample", dest="sample",
+                        default="Sample", required=False,
+                        help="Sample ID [deafult=Fample]")
     parser.add_argument("--sv-size", dest="sv_size", type=int,
                         default=30, metavar="int", help="minimum SV size [30]")
     #parser.add_argument("--phased", dest="phased", action="store_true",
@@ -90,7 +93,8 @@ def main():
 
     def run_svim(out_file, phased):
         svim_cmd = ["diploid", args.out_dir, aln_1, aln_2, args.reference, "--min_sv_size", str(args.sv_size),
-                    "--partition_max_distance", "5000", "--max_edit_distance", "0.3", "--filter_contained", "--query_names"]
+                    "--partition_max_distance", "5000", "--max_edit_distance", "0.3",
+                    "--filter_contained", "--query_names", "--sample", args.sample]
         if phased:
             svim_cmd.append("--phased_gt")
         if args.tandem_repeats:
