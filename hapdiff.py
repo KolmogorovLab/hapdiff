@@ -14,8 +14,9 @@ from Bio.SeqIO import SeqRecord
 pipeline_dir = os.path.dirname(os.path.realpath(__file__))
 MINIMAP2 = os.path.join(pipeline_dir, "submodules", "minimap2", "minimap2")
 SAMTOOLS = "samtools"
+BEDTOOLS = "bedtools"
 
-VERSION = "0.8"
+VERSION = "0.9"
 
 sys.path.insert(0, os.path.join(pipeline_dir, "submodules", "svim-asm", "src"))
 import svim_asm.main as svim
@@ -80,7 +81,7 @@ def main():
     parser.add_argument("-v", "--version", action="version", version=VERSION)
     args = parser.parse_args()
 
-    for e in [MINIMAP2, SAMTOOLS]:
+    for e in [MINIMAP2, SAMTOOLS, BEDTOOLS]:
         if not spawn.find_executable(e):
             print("Not installed: " + e, file=sys.stderr)
             return 1
@@ -131,6 +132,16 @@ def main():
 
     run_svim("hapdiff_unphased.vcf", False)
     run_svim("hapdiff_phased.vcf", True)
+
+    conf_pat = os.path.join(args.out_dir, "aln_coverage_pat.bed")
+    conf_mat = os.path.join(args.out_dir, "aln_coverage_mat.bed")
+    merged_bed = os.path.join(args.out_dir, "confident_regions.bed")
+
+    with open(merged_bed, "w") as fout:
+        fout.write("#SAMPLE:{0}\n".format(args.sample))
+        fout.flush()
+        bedtools_cmd = [BEDTOOLS, "intersect", "-a", conf_pat, "-b", conf_mat, "-sortout", "|", "uniq"]
+        subprocess.check_call(" ".join(bedtools_cmd), shell=True, stdout=fout)
 
     return 0
 
