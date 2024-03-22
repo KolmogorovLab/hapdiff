@@ -1,10 +1,10 @@
-# hapdiff (previously dipdiff)
+# hapdiff
 
 This is a simple SV calling package for diploid assemblies. It uses a modified version of [svim-asm](https://github.com/eldariont/svim-asm).
 The package includes its own version [minimap2](https://github.com/lh3/minimap2) to ensure reproducibility between runs, 
 as the result might be dependent on the aligner version and parameters.
 
-## Version 0.8
+## Version 0.9
 
 Quick start
 -----------
@@ -22,7 +22,7 @@ should be adjusted according to the available resources.
 ```
 cd directory_with_input
 DD_DIR=`pwd`
-docker run -v $DD_DIR:$DD_DIR -u `id -u`:`id -g` mkolmogo/hapdiff:0.8 \
+docker run -v $DD_DIR:$DD_DIR -u `id -u`:`id -g` mkolmogo/hapdiff:0.9 \
   hapdiff.py --reference $DD_DIR/ref.fasta --pat $DD_DIR/hap_1.fasta --mat $DD_DIR/hap_2.fasta --out-dir $DD_DIR/hapdiff -t 20
 ```
 
@@ -31,6 +31,8 @@ Output files
 
 The output directory will contain `hapdiff_unphased.vcf.gz` and `hapdiff_phased.vcf.gz` files with structural variants.
 Both files represent the same SVs, but in either phased or unphased VCF.
+
+Output also contains `confident_regions.bed` that reflects the regions of the reference where SV calls are comprehensive.
 
 
 Source Installation
@@ -46,7 +48,8 @@ make
 pip install -r requirements.txt
 ```
 
-In addition, hapdiff requires [samtools](https://github.com/samtools) to be installed in your system.
+In addition, hapdiff requires [samtools](https://github.com/samtools) and [bedtools](https://github.com/arq5x/bedtools2) 
+to be installed in your system.
 
 Afterwards, you can execute:
 
