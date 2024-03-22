@@ -1,5 +1,5 @@
-FROM ubuntu:20.04
-MAINTAINER Mikhail Kolmogorov, fenderglass@gmail.com
+FROM ubuntu:22.04
+MAINTAINER Mikhail Kolmogorov, mikolmogorov@gmail.com
 
 # update and install dependencies
 RUN apt-get update && \
@@ -7,11 +7,12 @@ RUN apt-get update && \
 	apt-get -y install make gcc g++ && \
 	apt-get -y install autoconf bzip2 wget tabix libz-dev libncurses5-dev libbz2-dev liblzma-dev && \
 	#apt-get -y install samtools && \
+	apt-get -y install bedtools && \
 	apt-get -y install python3-pip
 
 RUN python3 --version
 RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip install pysam scipy edlib matplotlib
+RUN python3 -m pip install pysam scipy edlib matplotlib biopython
 
 ### samtools
 # 1.9
