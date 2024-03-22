@@ -7,6 +7,9 @@ import os
 import argparse
 from distutils import spawn
 
+from Bio import SeqIO
+from Bio.SeqIO import SeqRecord
+
 
 pipeline_dir = os.path.dirname(os.path.realpath(__file__))
 MINIMAP2 = os.path.join(pipeline_dir, "submodules", "minimap2", "minimap2")
@@ -29,6 +32,18 @@ def generate_alignment(ref_path, asm_path, num_threads, out_bam):
     print("Running: " + cmd)
     subprocess.check_call(cmd, shell=True)
     subprocess.check_call("samtools index -@ 4 {0}".format(out_bam), shell=True)
+
+
+def fragment(input_fasta, output_fasta, frag_size):
+    with open(output_fasta, "w") as fout:
+        for seq in SeqIO.parse(input_fasta, "fasta"):
+            if len(seq.seq) < frag_size:
+                SeqIO.write(seq, fout, "fasta")
+            else:
+                for chunk in range(0, len(seq.seq) // frag_size + 1):
+                    chunk_seq = seq.seq[chunk * frag_size : (chunk + 1) * frag_size]
+                    chunk_id = str(seq.id) + "_chunk_" + str(chunk)
+                    SeqIO.write(SeqRecord(seq=chunk_seq, id=chunk_id, description=""), fout, "fasta")
 
 
 def main():
@@ -56,6 +71,8 @@ def main():
                         help="Sample ID [deafult=Fample]")
     parser.add_argument("--sv-size", dest="sv_size", type=int,
                         default=30, metavar="int", help="minimum SV size [30]")
+    parser.add_argument("--fragment", dest="fragment", type=int,
+                        default=None, metavar="int", help="fragment query to X Mb to reduce minimap2 memory footprint [None]")
     #parser.add_argument("--phased", dest="phased", action="store_true",
     #                    default=False, help="produce phased vcf")
     parser.add_argument("-t", "--threads", dest="threads", type=int,
@@ -79,16 +96,17 @@ def main():
     aln_1 = os.path.join(args.out_dir, prefix + "_pat" + ".bam")
     aln_2 = os.path.join(args.out_dir, prefix + "_mat" + ".bam")
 
-    #thread_1 = Thread(target=generate_alignment, args=(args.reference, args.hap_pat, args.threads // 2, aln_1))
-    #thread_2 = Thread(target=generate_alignment, args=(args.reference, args.hap_mat, args.threads // 2, aln_2))
-    #thread_1.start()
-    #thread_2.start()
-    #thread_1.join()
-    #thread_2.join()
+    fragmented_pat = args.hap_pat
+    fragmented_mat = args.hap_mat
+    if args.fragment is not None:
+        fragmented_pat = os.path.join(args.out_dir, "fragmented_pat.fasta")
+        fragment(args.hap_pat, fragmented_pat, args.fragment * 1000000)
+        fragmented_mat = os.path.join(args.out_dir, "fragmented_mat.fasta")
+        fragment(args.hap_mat, fragmented_mat, args.fragment * 1000000)
 
-    generate_alignment(args.reference, args.hap_pat, args.threads, aln_1)
+    generate_alignment(args.reference, fragmented_pat, args.threads, aln_1)
     file_check(aln_1)
-    generate_alignment(args.reference, args.hap_mat, args.threads, aln_2)
+    generate_alignment(args.reference, fragmented_mat, args.threads, aln_2)
     file_check(aln_2)
 
     def run_svim(out_file, phased):
